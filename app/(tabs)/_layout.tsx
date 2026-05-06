@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import { Home, User, Sparkles, Music, Leaf } from 'lucide-react-native';
+import { Home, User, Sparkles, Leaf } from 'lucide-react-native';
 import { useUser } from '@/contexts/UserContext';
 import { getCycleDay, getCurrentHormonalPhase, themes } from '@/services/ThemeService';
 
@@ -37,9 +37,9 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="yoga"
+        name="treatments"
         options={{
-          title: 'Yoga',
+          title: 'Treatments',
           tabBarIcon: ({ size, color }) => (
             <Sparkles size={size} color={color} />
           ),
@@ -55,15 +55,6 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="dance"
-        options={{
-          title: 'Dance',
-          tabBarIcon: ({ size, color }) => (
-            <Music size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
         name="profile"
         options={{
           title: 'Profile',
@@ -73,13 +64,14 @@ export default function TabLayout() {
         }}
       />
       {/* Hidden tabs */}
+      <Tabs.Screen name="yoga" options={{ href: null }} />
+      <Tabs.Screen name="dance" options={{ href: null }} />
       <Tabs.Screen name="workout" options={{ href: null }} />
       <Tabs.Screen name="diet" options={{ href: null }} />
       <Tabs.Screen name="beauty" options={{ href: null }} />
       <Tabs.Screen name="mind" options={{ href: null }} />
       <Tabs.Screen name="store" options={{ href: null }} />
       <Tabs.Screen name="sleep" options={{ href: null }} />
-      <Tabs.Screen name="treatments" options={{ href: null }} />
       <Tabs.Screen name="doctors" options={{ href: null }} />
       <Tabs.Screen name="pcos" options={{ href: null }} />
     </Tabs>
