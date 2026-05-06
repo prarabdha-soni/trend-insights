@@ -404,7 +404,7 @@ export class NotificationService {
         await this.scheduleNotification(
           NotificationType.PERIOD_START,
           periodReminderDate,
-          this.getRandomContent(NotificationType.PERIOD_START)
+          this.getRandomContent(NOTIFICATION_CONTENT[NotificationType.PERIOD_START])
         );
       }
     }
@@ -415,7 +415,7 @@ export class NotificationService {
         await this.scheduleNotification(
           NotificationType.OVULATION,
           this.cycleData.ovulationDate,
-          this.getRandomContent(NotificationType.OVULATION)
+          this.getRandomContent(NOTIFICATION_CONTENT[NotificationType.OVULATION])
         );
       }
     }
@@ -431,7 +431,7 @@ export class NotificationService {
           await this.scheduleNotification(
             NotificationType.SYMPTOM_LOGGING,
             date,
-            this.getRandomContent(NotificationType.SYMPTOM_LOGGING)
+            this.getRandomContent(NOTIFICATION_CONTENT[NotificationType.SYMPTOM_LOGGING])
           );
         }
       }
@@ -485,7 +485,7 @@ export class NotificationService {
       await this.scheduleNotification(
         NotificationType.MONTHLY_SUMMARY,
         nextMonth,
-        this.getRandomContent(NotificationType.MONTHLY_SUMMARY)
+        this.getRandomContent(NOTIFICATION_CONTENT[NotificationType.MONTHLY_SUMMARY])
       );
     }
 
@@ -500,7 +500,7 @@ export class NotificationService {
           await this.scheduleNotification(
             NotificationType.DAILY_CHECKIN,
             date,
-            this.getRandomContent(NotificationType.DAILY_CHECKIN)
+            this.getRandomContent(NOTIFICATION_CONTENT[NotificationType.DAILY_CHECKIN])
           );
         }
       }
@@ -526,8 +526,10 @@ export class NotificationService {
       }
     }
 
+    const seconds = Math.max(1, Math.floor((date.getTime() - Date.now()) / 1000));
     const trigger: Notifications.NotificationTriggerInput = {
-      date: date,
+      type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+      seconds,
       repeats: false,
     };
 

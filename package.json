@@ -7,6 +7,7 @@
     "dev": "EXPO_NO_TELEMETRY=1 expo start",
     "build:web": "expo export --platform web",
     "build": "expo export --platform web",
+    "build:dev": "expo export --platform web",
     "start": "npx expo start --web",
     "lint": "expo lint",
     "typecheck": "tsc --noEmit"
