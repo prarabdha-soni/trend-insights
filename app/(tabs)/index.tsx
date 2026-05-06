@@ -280,28 +280,29 @@ export default function HomeScreen() {
           <Text style={styles.brand}>GLOWW</Text>
           {profile.lastPeriodDate && peakLabel ? (
             <View style={styles.fertilePill}>
-              <Text style={styles.fertilePillText}>Peak fertile date: {peakLabel}</Text>
+              <Text style={styles.fertilePillText}>Peak · {peakLabel}</Text>
             </View>
           ) : null}
         </View>
-        <Text style={styles.title}>Your hormones change every week.</Text>
-        <Text style={styles.subtitle}>So should your <Text style={styles.exerciseText}>exercise</Text></Text>
-        <View style={styles.phaseContainer}>
-          <Text style={styles.phaseName}>{phaseKey.toUpperCase()}</Text>
-          <View style={styles.phaseIconWrapper}>
+
+        <View style={styles.phaseBlock}>
+          <Text style={styles.phaseLabel}>{phaseNumber[phaseKey]} · {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</Text>
+          <View style={styles.phaseRow}>
+            <Text style={styles.phaseName}>{phaseKey}</Text>
             <Text style={styles.phaseIconText}>{theme.phaseIcon}</Text>
           </View>
+          <View style={styles.divider} />
+          <Text style={styles.title}>Your hormones change every week.</Text>
+          <Text style={styles.subtitle}>So should your <Text style={styles.exerciseText}>routine.</Text></Text>
+          <Text style={styles.phaseAffirm}>{theme.phaseText}</Text>
         </View>
-        <Text style={styles.phaseNumber}>
-          {phaseNumber[phaseKey]} • {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-        </Text>
-        <Text style={styles.phaseAffirm}>{theme.phaseText}</Text>
       </LinearGradient>
 
       {/* Welcome Section */}
-      <View style={[styles.welcomeCard, { borderColor: theme.border, backgroundColor: theme.surface }]}>
-        <Text style={styles.welcomeEmoji}>🌸</Text>
-        <Text style={styles.welcomeTitle}>Find Your Best Days</Text>
+      <View style={[styles.welcomeCard, { backgroundColor: theme.accentColor }]}>
+        <View style={styles.welcomeAccent} />
+        <Text style={styles.welcomeKicker}>WELCOME BACK</Text>
+        <Text style={styles.welcomeTitle}>Find Your{'\n'}Best Days.</Text>
         <Text style={styles.welcomeText}>Work smarter. Glow longer.</Text>
       </View>
 
