@@ -277,7 +277,7 @@ export default function HomeScreen() {
     <ScrollView style={[styles.container, { backgroundColor: theme.surface }]} showsVerticalScrollIndicator={false}>
       <LinearGradient colors={theme.gradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.hero}>
         <View style={styles.heroTop}>
-          <Text style={styles.brand}>GLOWW</Text>
+          <Text style={styles.brand}>SHETRIVES</Text>
           {profile.lastPeriodDate && peakLabel ? (
             <View style={styles.fertilePill}>
               <Text style={styles.fertilePillText}>Peak · {peakLabel}</Text>
