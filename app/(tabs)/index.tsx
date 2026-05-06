@@ -280,28 +280,29 @@ export default function HomeScreen() {
           <Text style={styles.brand}>GLOWW</Text>
           {profile.lastPeriodDate && peakLabel ? (
             <View style={styles.fertilePill}>
-              <Text style={styles.fertilePillText}>Peak fertile date: {peakLabel}</Text>
+              <Text style={styles.fertilePillText}>Peak · {peakLabel}</Text>
             </View>
           ) : null}
         </View>
-        <Text style={styles.title}>Your hormones change every week.</Text>
-        <Text style={styles.subtitle}>So should your <Text style={styles.exerciseText}>exercise</Text></Text>
-        <View style={styles.phaseContainer}>
-          <Text style={styles.phaseName}>{phaseKey.toUpperCase()}</Text>
-          <View style={styles.phaseIconWrapper}>
+
+        <View style={styles.phaseBlock}>
+          <Text style={styles.phaseLabel}>{phaseNumber[phaseKey]} · {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</Text>
+          <View style={styles.phaseRow}>
+            <Text style={styles.phaseName}>{phaseKey}</Text>
             <Text style={styles.phaseIconText}>{theme.phaseIcon}</Text>
           </View>
+          <View style={styles.divider} />
+          <Text style={styles.title}>Your hormones change every week.</Text>
+          <Text style={styles.subtitle}>So should your <Text style={styles.exerciseText}>routine.</Text></Text>
+          <Text style={styles.phaseAffirm}>{theme.phaseText}</Text>
         </View>
-        <Text style={styles.phaseNumber}>
-          {phaseNumber[phaseKey]} • {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-        </Text>
-        <Text style={styles.phaseAffirm}>{theme.phaseText}</Text>
       </LinearGradient>
 
       {/* Welcome Section */}
-      <View style={[styles.welcomeCard, { borderColor: theme.border, backgroundColor: theme.surface }]}>
-        <Text style={styles.welcomeEmoji}>🌸</Text>
-        <Text style={styles.welcomeTitle}>Find Your Best Days</Text>
+      <View style={[styles.welcomeCard, { backgroundColor: theme.accentColor }]}>
+        <View style={styles.welcomeAccent} />
+        <Text style={styles.welcomeKicker}>WELCOME BACK</Text>
+        <Text style={styles.welcomeTitle}>Find Your{'\n'}Best Days.</Text>
         <Text style={styles.welcomeText}>Work smarter. Glow longer.</Text>
       </View>
 
@@ -541,25 +542,27 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#FAF9F7' },
-  hero: { paddingTop: 56, paddingBottom: 32, paddingHorizontal: 20, borderBottomLeftRadius: 28, borderBottomRightRadius: 28 },
-  heroTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
+  hero: { paddingTop: 56, paddingBottom: 36, paddingHorizontal: 20, borderBottomLeftRadius: 32, borderBottomRightRadius: 32 },
+  heroTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 28 },
   brand: { fontSize: 18, color: 'rgba(255,255,255,0.95)', fontWeight: '700', letterSpacing: 3, fontFamily: 'System' },
-  title: { fontSize: 26, fontWeight: '700', color: '#FFF', marginBottom: 8, textAlign: 'left', lineHeight: 34 },
-  subtitle: { fontSize: 15, color: 'rgba(255,255,255,0.88)', marginBottom: 20, lineHeight: 22 },
-  exerciseText: { fontSize: 22, fontWeight: '700' },
-  fertilePill: { backgroundColor: 'rgba(255,255,255,0.95)', paddingVertical: 6, paddingHorizontal: 14, borderRadius: 14, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.15, shadowRadius: 4, elevation: 3 },
-  fertilePillText: { color: '#1F2937', fontWeight: '700', fontSize: 14, letterSpacing: 0.2 },
-  phaseContainer: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 4, marginBottom: 8 },
-  phaseName: { fontSize: 28, fontWeight: '700', color: '#FFF', letterSpacing: 1 },
-  phaseIconWrapper: { marginLeft: 8, width: 32, height: 32, alignItems: 'center', justifyContent: 'center' },
-  phaseIconText: { fontSize: 20 },
-  phaseNumber: { fontSize: 14, color: 'rgba(255,255,255,0.85)', textAlign: 'center', marginTop: 6, fontWeight: '600', letterSpacing: 0.5 },
-  phaseAffirm: { fontSize: 15, color: 'rgba(255,255,255,0.9)', textAlign: 'center', marginTop: 6, lineHeight: 22 },
+  title: { fontSize: 30, fontWeight: '800', color: '#FFF', marginTop: 6, textAlign: 'left', lineHeight: 36, letterSpacing: -0.5 },
+  subtitle: { fontSize: 16, color: 'rgba(255,255,255,0.9)', marginTop: 4, lineHeight: 22 },
+  exerciseText: { fontSize: 16, fontWeight: '800', textDecorationLine: 'underline' },
+  fertilePill: { backgroundColor: 'rgba(0,0,0,0.25)', paddingVertical: 7, paddingHorizontal: 14, borderRadius: 999, borderWidth: 1, borderColor: 'rgba(255,255,255,0.3)' },
+  fertilePillText: { color: '#FFFFFF', fontWeight: '700', fontSize: 12, letterSpacing: 0.4 },
+  phaseBlock: { },
+  phaseLabel: { fontSize: 11, color: 'rgba(255,255,255,0.85)', fontWeight: '700', letterSpacing: 2, textTransform: 'uppercase' },
+  phaseRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 6 },
+  phaseName: { fontSize: 44, fontWeight: '800', color: '#FFF', letterSpacing: -1.2 },
+  phaseIconText: { fontSize: 36 },
+  divider: { height: 1, backgroundColor: 'rgba(255,255,255,0.25)', marginVertical: 18 },
+  phaseAffirm: { fontSize: 14, color: 'rgba(255,255,255,0.85)', marginTop: 12, lineHeight: 20, fontStyle: 'italic' },
 
-  welcomeCard: { marginTop: 16, marginHorizontal: 20, backgroundColor: '#FFFFFF', borderRadius: 16, padding: 24, borderWidth: 1, alignItems: 'center' },
-  welcomeEmoji: { fontSize: 48, marginBottom: 12 },
-  welcomeTitle: { fontSize: 24, fontWeight: '700', color: '#111827', marginBottom: 8, textAlign: 'center' },
-  welcomeText: { fontSize: 15, color: '#6B7280', textAlign: 'center', lineHeight: 22 },
+  welcomeCard: { marginTop: 20, marginHorizontal: 20, borderRadius: 24, padding: 28, position: 'relative', overflow: 'hidden' },
+  welcomeAccent: { position: 'absolute', top: -40, right: -40, width: 160, height: 160, borderRadius: 80, backgroundColor: 'rgba(255,255,255,0.15)' },
+  welcomeKicker: { fontSize: 11, color: 'rgba(255,255,255,0.85)', fontWeight: '800', letterSpacing: 2, marginBottom: 10 },
+  welcomeTitle: { fontSize: 32, fontWeight: '800', color: '#FFFFFF', marginBottom: 10, lineHeight: 36, letterSpacing: -0.8 },
+  welcomeText: { fontSize: 15, color: 'rgba(255,255,255,0.92)', lineHeight: 22, fontWeight: '500' },
 
   quickRow: { marginTop: 12 },
   quickChip: { borderWidth: 1, paddingVertical: 10, paddingHorizontal: 16, borderRadius: 20, backgroundColor: '#FFFFFF' },
