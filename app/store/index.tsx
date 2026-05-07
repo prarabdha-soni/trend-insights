@@ -30,7 +30,7 @@ const PRODUCTS: Product[] = [
     rating: 4.8,
     reviews: 1240,
     description: 'Soft medical-grade silicone cup for light to medium flow. Includes carry pouch.',
-    phaseRecommended: ['Menstrual'],
+    phaseRecommended: ['Menstrual'], image: shethrivesCup,
   },
   {
     id: 'st-cup-m',
@@ -40,7 +40,7 @@ const PRODUCTS: Product[] = [
     rating: 4.9,
     reviews: 2150,
     description: 'Best-selling reusable cup. Up to 12 hours of leak-free comfort.',
-    phaseRecommended: ['Menstrual'],
+    phaseRecommended: ['Menstrual'], image: shethrivesCup,
   },
   {
     id: 'st-cup-l',
@@ -50,7 +50,7 @@ const PRODUCTS: Product[] = [
     rating: 4.8,
     reviews: 870,
     description: 'Higher capacity cup designed for heavier flow days. Eco-friendly & reusable.',
-    phaseRecommended: ['Menstrual'],
+    phaseRecommended: ['Menstrual'], image: shethrivesCup,
   },
   {
     id: 'st-cup-duo',
@@ -60,7 +60,7 @@ const PRODUCTS: Product[] = [
     rating: 4.9,
     reviews: 540,
     description: 'Two cups for different flow days. Includes sterilizer pouch.',
-    phaseRecommended: ['Menstrual'],
+    phaseRecommended: ['Menstrual'], image: shethrivesCup,
   },
 ];
 
