@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import { Home, User, Sparkles, Leaf } from 'lucide-react-native';
+import { Home, User, Sparkles, Leaf, ShoppingBag, BookOpen } from 'lucide-react-native';
 import { useUser } from '@/contexts/UserContext';
 import { getCycleDay, getCurrentHormonalPhase, themes } from '@/services/ThemeService';
 
@@ -55,6 +55,24 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="store"
+        options={{
+          title: 'Products',
+          tabBarIcon: ({ size, color }) => (
+            <ShoppingBag size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="pcos"
+        options={{
+          title: 'Education',
+          tabBarIcon: ({ size, color }) => (
+            <BookOpen size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="profile"
         options={{
           title: 'Profile',
@@ -70,10 +88,8 @@ export default function TabLayout() {
       <Tabs.Screen name="diet" options={{ href: null }} />
       <Tabs.Screen name="beauty" options={{ href: null }} />
       <Tabs.Screen name="mind" options={{ href: null }} />
-      <Tabs.Screen name="store" options={{ href: null }} />
       <Tabs.Screen name="sleep" options={{ href: null }} />
       <Tabs.Screen name="doctors" options={{ href: null }} />
-      <Tabs.Screen name="pcos" options={{ href: null }} />
     </Tabs>
   );
 }
