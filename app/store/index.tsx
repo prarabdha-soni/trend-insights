@@ -5,7 +5,7 @@ import { getCycleDay, getCurrentHormonalPhase, themes } from '@/services/ThemeSe
 import { useRouter } from 'expo-router';
 import { ArrowLeft, ShoppingBag, Package, Heart } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import shethrivesCup from '@/assets/shethrives-cup.png';
+import shethrivesCup from '@/assets/images/shethrives-cup.png';
 
 const { width } = Dimensions.get('window');
 
