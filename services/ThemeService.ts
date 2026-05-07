@@ -103,13 +103,6 @@ export const FLO_COLORS = {
   warning: '#F4A261',
 };
 
-(['Menstrual', 'Follicular', 'Ovulation', 'Luteal'] as HormonalPhase[]).forEach((p) => {
-  themes[p].gradient = ['#FF8FB1', '#FF5C8A'];
-  themes[p].accentColor = FLO_COLORS.primary;
-  themes[p].surface = FLO_COLORS.surface;
-  themes[p].border = FLO_COLORS.border;
-});
-
 export const themes: Record<HormonalPhase, PhaseTheme> = {
   Follicular: {
     gradient: ['#A073E1', '#E7A0F8'],
