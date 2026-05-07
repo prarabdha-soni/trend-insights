@@ -5,6 +5,7 @@ import { getCycleDay, getCurrentHormonalPhase, themes } from '@/services/ThemeSe
 import { useRouter } from 'expo-router';
 import { ArrowLeft, ShoppingBag, Package, Heart } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+const shethrivesCup = require('@/assets/images/shethrives-cup.png');
 
 const { width } = Dimensions.get('window');
 
@@ -13,7 +14,7 @@ type Product = {
   name: string;
   category: 'workout' | 'hygiene';
   price: string;
-  image?: string;
+  image?: any;
   rating: number;
   reviews: number;
   description: string;
@@ -21,140 +22,45 @@ type Product = {
 };
 
 const PRODUCTS: Product[] = [
-  // Workout Equipment
-  { 
-    id: 'w1', 
-    name: 'Premium Yoga Mat', 
-    category: 'workout', 
-    price: '₹2,499', 
-    rating: 4.8, 
-    reviews: 1240, 
-    description: 'Non-slip, eco-friendly mat perfect for all phases', 
-    phaseRecommended: ['Menstrual', 'Luteal'],
-    image: 'https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?w=400&h=300&fit=crop'
+  {
+    id: 'st-cup-s',
+    name: 'SheThrives Menstrual Cup — Small',
+    category: 'hygiene',
+    price: '₹899',
+    rating: 4.8,
+    reviews: 1240,
+    description: 'Soft medical-grade silicone cup for light to medium flow. Includes carry pouch.',
+    phaseRecommended: ['Menstrual'], image: shethrivesCup,
   },
-  { 
-    id: 'w2', 
-    name: 'Adjustable Dumbbells Set', 
-    category: 'workout', 
-    price: '₹4,999', 
-    rating: 4.7, 
-    reviews: 856, 
-    description: '2-10kg adjustable weights for strength training', 
-    phaseRecommended: ['Follicular', 'Ovulation'],
-    image: 'https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=400&h=300&fit=crop'
+  {
+    id: 'st-cup-m',
+    name: 'SheThrives Menstrual Cup — Medium',
+    category: 'hygiene',
+    price: '₹999',
+    rating: 4.9,
+    reviews: 2150,
+    description: 'Best-selling reusable cup. Up to 12 hours of leak-free comfort.',
+    phaseRecommended: ['Menstrual'], image: shethrivesCup,
   },
-  { 
-    id: 'w3', 
-    name: 'Resistance Bands Set', 
-    category: 'workout', 
-    price: '₹1,299', 
-    rating: 4.6, 
-    reviews: 2100, 
-    description: '5-band set for full-body workouts', 
-    phaseRecommended: ['Follicular', 'Ovulation'],
-    image: 'https://images.unsplash.com/photo-1549060279-7e168fcee0c2?w=400&h=300&fit=crop'
+  {
+    id: 'st-cup-l',
+    name: 'SheThrives Menstrual Cup — Large',
+    category: 'hygiene',
+    price: '₹1,099',
+    rating: 4.8,
+    reviews: 870,
+    description: 'Higher capacity cup designed for heavier flow days. Eco-friendly & reusable.',
+    phaseRecommended: ['Menstrual'], image: shethrivesCup,
   },
-  { 
-    id: 'w4', 
-    name: 'Pilates Ring', 
-    category: 'workout', 
-    price: '₹1,899', 
-    rating: 4.5, 
-    reviews: 634, 
-    description: 'Compact pilates ring for core and flexibility', 
-    phaseRecommended: ['Luteal', 'Menstrual'],
-    image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop'
-  },
-  { 
-    id: 'w5', 
-    name: 'Foam Roller', 
-    category: 'workout', 
-    price: '₹999', 
-    rating: 4.7, 
-    reviews: 1890, 
-    description: 'Muscle recovery and relaxation tool', 
-    phaseRecommended: ['Luteal', 'Menstrual'],
-    image: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=400&h=300&fit=crop'
-  },
-  { 
-    id: 'w6', 
-    name: 'Meditation Cushion Set', 
-    category: 'workout', 
-    price: '₹1,599', 
-    rating: 4.8, 
-    reviews: 450, 
-    description: 'Ergonomic cushions for meditation and yoga', 
-    phaseRecommended: ['Menstrual', 'Luteal'],
-    image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=400&h=300&fit=crop'
-  },
-  
-  // Hygiene Products
-  { 
-    id: 'h1', 
-    name: 'Organic Cotton Pads (Pack of 30)', 
-    category: 'hygiene', 
-    price: '₹299', 
-    rating: 4.9, 
-    reviews: 3200, 
-    description: 'Chemical-free, ultra-absorbent pads', 
-    phaseRecommended: ['Menstrual'],
-    image: 'https://images.unsplash.com/photo-1607619056574-7b8d3ee536b2?w=400&h=300&fit=crop'
-  },
-  { 
-    id: 'h2', 
-    name: 'Menstrual Cup Set', 
-    category: 'hygiene', 
-    price: '₹899', 
-    rating: 4.7, 
-    reviews: 1850, 
-    description: 'Eco-friendly, reusable cup with storage case', 
-    phaseRecommended: ['Menstrual'],
-    image: 'https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?w=400&h=300&fit=crop'
-  },
-  { 
-    id: 'h3', 
-    name: 'Period Panties (3-pack)', 
-    category: 'hygiene', 
-    price: '₹2,499', 
-    rating: 4.8, 
-    reviews: 2100, 
-    description: 'Leak-proof, breathable period underwear', 
-    phaseRecommended: ['Menstrual'],
-    image: 'https://images.unsplash.com/photo-1586790170083-2f9ceadc732d?w=400&h=300&fit=crop'
-  },
-  { 
-    id: 'h4', 
-    name: 'Herbal Pain Relief Roll-On', 
-    category: 'hygiene', 
-    price: '₹449', 
-    rating: 4.6, 
-    reviews: 920, 
-    description: 'Natural pain relief for cramps and discomfort', 
-    phaseRecommended: ['Menstrual'],
-    image: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&h=300&fit=crop'
-  },
-  { 
-    id: 'h5', 
-    name: 'Organic Tampons (Box of 20)', 
-    category: 'hygiene', 
-    price: '₹349', 
-    rating: 4.7, 
-    reviews: 1500, 
-    description: '100% organic cotton tampons', 
-    phaseRecommended: ['Menstrual'],
-    image: 'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=400&h=300&fit=crop'
-  },
-  { 
-    id: 'h6', 
-    name: 'Intimate Wash (pH Balanced)', 
-    category: 'hygiene', 
-    price: '₹249', 
-    rating: 4.8, 
-    reviews: 2800, 
-    description: 'Gentle, pH-balanced intimate care', 
-    phaseRecommended: ['All'],
-    image: 'https://images.unsplash.com/photo-1556228720-195a672e8a03?w=400&h=300&fit=crop'
+  {
+    id: 'st-cup-duo',
+    name: 'SheThrives Cup Duo Pack (S + M)',
+    category: 'hygiene',
+    price: '₹1,699',
+    rating: 4.9,
+    reviews: 540,
+    description: 'Two cups for different flow days. Includes sterilizer pouch.',
+    phaseRecommended: ['Menstrual'], image: shethrivesCup,
   },
 ];
 
@@ -239,7 +145,7 @@ export default function StoreScreen() {
               <View style={styles.productImageContainer}>
                 {product.image ? (
                   <Image 
-                    source={{ uri: product.image }} 
+                    source={typeof product.image === 'string' ? { uri: product.image } : product.image} 
                     style={styles.productImage}
                     resizeMode="cover"
                   />
