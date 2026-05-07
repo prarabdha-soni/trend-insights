@@ -84,6 +84,32 @@ export type PhaseTheme = {
   weightLossTips: string[];
 };
 
+// ============= Flo-inspired unified color palette =============
+// Override per-phase colors so the entire app uses one consistent theme,
+// regardless of cycle phase. Only colors/gradient are unified—phase-specific
+// content (workouts, diet, etc.) remains intact.
+export const FLO_COLORS = {
+  primary: '#FF5C8A',        // coral-pink CTA / accent
+  primaryDark: '#E94B78',
+  primaryDeep: '#1A1A40',    // deep indigo for headings/icons
+  surface: '#FFF1F2',        // app background
+  surfaceAlt: '#FFE4E9',     // secondary surface
+  card: '#FFFFFF',
+  border: '#F2D9DE',
+  textPrimary: '#1A1A40',
+  textSecondary: '#4A4A5E',
+  textMuted: '#6B6B80',
+  success: '#3BB273',
+  warning: '#F4A261',
+};
+
+(['Menstrual', 'Follicular', 'Ovulation', 'Luteal'] as HormonalPhase[]).forEach((p) => {
+  themes[p].gradient = ['#FF8FB1', '#FF5C8A'];
+  themes[p].accentColor = FLO_COLORS.primary;
+  themes[p].surface = FLO_COLORS.surface;
+  themes[p].border = FLO_COLORS.border;
+});
+
 export const themes: Record<HormonalPhase, PhaseTheme> = {
   Follicular: {
     gradient: ['#A073E1', '#E7A0F8'],
