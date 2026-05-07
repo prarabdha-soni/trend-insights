@@ -5,6 +5,7 @@ import { getCycleDay, getCurrentHormonalPhase, themes } from '@/services/ThemeSe
 import { useRouter } from 'expo-router';
 import { ArrowLeft, ShoppingBag, Package, Heart } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import shethrivesCup from '@/assets/shethrives-cup.png';
 
 const { width } = Dimensions.get('window');
 
@@ -13,7 +14,7 @@ type Product = {
   name: string;
   category: 'workout' | 'hygiene';
   price: string;
-  image?: string;
+  image?: any;
   rating: number;
   reviews: number;
   description: string;
@@ -144,7 +145,7 @@ export default function StoreScreen() {
               <View style={styles.productImageContainer}>
                 {product.image ? (
                   <Image 
-                    source={{ uri: product.image }} 
+                    source={typeof product.image === 'string' ? { uri: product.image } : product.image} 
                     style={styles.productImage}
                     resizeMode="cover"
                   />
