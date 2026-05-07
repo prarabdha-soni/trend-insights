@@ -315,3 +315,11 @@ export const themes: Record<HormonalPhase, PhaseTheme> = {
 };
 
 
+
+// Apply Flo unified palette across all phases (must run AFTER themes is defined)
+(['Menstrual', 'Follicular', 'Ovulation', 'Luteal'] as HormonalPhase[]).forEach((p) => {
+  themes[p].gradient = ['#FF8FB1', '#FF5C8A'];
+  themes[p].accentColor = FLO_COLORS.primary;
+  themes[p].surface = FLO_COLORS.surface;
+  themes[p].border = FLO_COLORS.border;
+});
