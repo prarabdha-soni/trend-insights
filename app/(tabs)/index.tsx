@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal, Animated, 
 // @ts-ignore: Only used on native
 import { WebView } from 'react-native-webview';
 import { useUser } from '@/contexts/UserContext';
-import { Sparkles, Crown, Play, X } from 'lucide-react-native';
+import { Sparkles, Crown, Play, X, Droplet, Smile, Activity, Plus } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import { useMemo, useState, useEffect, useRef } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -108,6 +108,12 @@ export default function HomeScreen() {
 
   const peakFertile = useMemo(() => getNextOvulationDate(profile.lastPeriodDate ?? null), [profile.lastPeriodDate]);
   const peakLabel = peakFertile ? peakFertile.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : null;
+
+  // Clue-style cycle tracker calculations
+  const cycleDay = profile.lastPeriodDate ? getCycleDay(profile.lastPeriodDate) : null;
+  const cycleLength = 28;
+  const daysUntilPeriod = cycleDay ? Math.max(0, cycleLength - cycleDay + 1) : null;
+  const cycleProgress = cycleDay ? Math.min(1, cycleDay / cycleLength) : 0;
 
   // Calculate best days for activities based on last period date
   const bestDays = useMemo(() => {
@@ -297,6 +303,67 @@ export default function HomeScreen() {
           <Text style={styles.phaseAffirm}>{theme.phaseText}</Text>
         </View>
       </LinearGradient>
+
+      {/* Clue-style Cycle Tracker */}
+      <View style={styles.trackerCard}>
+        <View style={styles.trackerTop}>
+          <View style={styles.trackerRingWrap}>
+            <View style={[styles.trackerRing, { borderColor: theme.border }]}>
+              <View
+                style={[
+                  styles.trackerRingFill,
+                  {
+                    borderColor: theme.accentColor,
+                    transform: [{ rotate: `${cycleProgress * 360}deg` }],
+                  },
+                ]}
+              />
+              <View style={styles.trackerRingInner}>
+                <Text style={styles.trackerDayLabel}>Day</Text>
+                <Text style={[styles.trackerDayNum, { color: theme.accentColor }]}>
+                  {cycleDay ?? '—'}
+                </Text>
+                <Text style={styles.trackerPhase}>{phaseKey}</Text>
+              </View>
+            </View>
+          </View>
+          <View style={styles.trackerInfo}>
+            <Text style={styles.trackerInfoLabel}>Period in</Text>
+            <Text style={[styles.trackerInfoValue, { color: theme.accentColor }]}>
+              {daysUntilPeriod !== null ? `${daysUntilPeriod} ${daysUntilPeriod === 1 ? 'day' : 'days'}` : 'Set date'}
+            </Text>
+            <Text style={styles.trackerInfoSub}>Cycle length · {cycleLength} days</Text>
+            {peakLabel ? (
+              <View style={[styles.trackerChip, { backgroundColor: theme.surface, borderColor: theme.border }]}>
+                <Text style={[styles.trackerChipText, { color: theme.accentColor }]}>Peak fertility · {peakLabel}</Text>
+              </View>
+            ) : null}
+          </View>
+        </View>
+
+        <View style={styles.trackerDivider} />
+
+        <Text style={styles.trackerLogTitle}>Log today</Text>
+        <View style={styles.trackerActions}>
+          {[
+            { key: 'period', label: 'Period', Icon: Droplet },
+            { key: 'mood', label: 'Mood', Icon: Smile },
+            { key: 'symptoms', label: 'Symptoms', Icon: Activity },
+            { key: 'more', label: 'More', Icon: Plus },
+          ].map(({ key, label, Icon }) => (
+            <TouchableOpacity
+              key={key}
+              style={styles.trackerActionBtn}
+              onPress={() => router.push('/tracking' as any)}
+            >
+              <View style={[styles.trackerActionIcon, { backgroundColor: theme.surface, borderColor: theme.border }]}>
+                <Icon color={theme.accentColor} size={20} />
+              </View>
+              <Text style={styles.trackerActionLabel}>{label}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </View>
 
       {/* Welcome Section */}
       <View style={[styles.welcomeCard, { backgroundColor: theme.accentColor }]}>
@@ -687,4 +754,57 @@ const styles = StyleSheet.create({
   quickAccessCard: { width: '47%', padding: 20, borderRadius: 16, borderWidth: 1, alignItems: 'center', justifyContent: 'center', minHeight: 100 },
   quickAccessEmoji: { fontSize: 32, marginBottom: 8 },
   quickAccessLabel: { fontSize: 14, fontWeight: '700', color: '#111827', textAlign: 'center' },
+  // Clue-style tracker
+  trackerCard: {
+    marginHorizontal: 16,
+    marginTop: -24,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 24,
+    padding: 20,
+    shadowColor: '#1A1A40',
+    shadowOpacity: 0.08,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 4,
+    zIndex: 10,
+  },
+  trackerTop: { flexDirection: 'row', alignItems: 'center', gap: 16 },
+  trackerRingWrap: { width: 120, height: 120, alignItems: 'center', justifyContent: 'center' },
+  trackerRing: {
+    width: 120, height: 120, borderRadius: 60,
+    borderWidth: 6, alignItems: 'center', justifyContent: 'center',
+    overflow: 'hidden',
+  },
+  trackerRingFill: {
+    position: 'absolute',
+    width: 120, height: 120, borderRadius: 60,
+    borderWidth: 6,
+    borderRightColor: 'transparent',
+    borderBottomColor: 'transparent',
+    borderLeftColor: 'transparent',
+  },
+  trackerRingInner: { alignItems: 'center', justifyContent: 'center' },
+  trackerDayLabel: { fontSize: 11, color: '#6B7280', fontWeight: '600', textTransform: 'uppercase', letterSpacing: 0.5 },
+  trackerDayNum: { fontSize: 32, fontWeight: '800', lineHeight: 36 },
+  trackerPhase: { fontSize: 11, color: '#1A1A40', fontWeight: '700' },
+  trackerInfo: { flex: 1, gap: 4 },
+  trackerInfoLabel: { fontSize: 13, color: '#6B7280', fontWeight: '600' },
+  trackerInfoValue: { fontSize: 24, fontWeight: '800' },
+  trackerInfoSub: { fontSize: 12, color: '#6B7280' },
+  trackerChip: {
+    alignSelf: 'flex-start', marginTop: 8,
+    paddingVertical: 6, paddingHorizontal: 10,
+    borderRadius: 12, borderWidth: 1,
+  },
+  trackerChipText: { fontSize: 11, fontWeight: '700' },
+  trackerDivider: { height: 1, backgroundColor: '#F2D9DE', marginVertical: 16 },
+  trackerLogTitle: { fontSize: 13, fontWeight: '700', color: '#1A1A40', marginBottom: 12, textTransform: 'uppercase', letterSpacing: 0.5 },
+  trackerActions: { flexDirection: 'row', justifyContent: 'space-between' },
+  trackerActionBtn: { alignItems: 'center', gap: 6, flex: 1 },
+  trackerActionIcon: {
+    width: 52, height: 52, borderRadius: 26,
+    alignItems: 'center', justifyContent: 'center',
+    borderWidth: 1,
+  },
+  trackerActionLabel: { fontSize: 12, fontWeight: '600', color: '#1A1A40' },
 });
