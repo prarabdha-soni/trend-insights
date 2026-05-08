@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal, Animated, 
 // @ts-ignore: Only used on native
 import { WebView } from 'react-native-webview';
 import { useUser } from '@/contexts/UserContext';
-import { Sparkles, Crown, Play, X, Droplet, Smile, Activity, Plus } from 'lucide-react-native';
+import { Sparkles, Crown, Play, X, Droplet, Smile, Activity, ChevronRight, Heart, Thermometer, Wind, Moon, Check, Minus, Plus } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import { useMemo, useState, useEffect, useRef } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -304,65 +304,131 @@ export default function HomeScreen() {
         </View>
       </LinearGradient>
 
-      {/* Clue-style Cycle Tracker */}
+      {/* Whoop-style Cycle Tracker */}
       <View style={styles.trackerCard}>
+        <View style={styles.trackerCardHeader}>
+          <Text style={styles.trackerCardTitle}>CYCLE TRACKER</Text>
+          <ChevronRight color="#7A8088" size={18} />
+        </View>
         <View style={styles.trackerTop}>
-          <View style={styles.trackerRingWrap}>
-            <View style={[styles.trackerRing, { borderColor: theme.border }]}>
-              <View
-                style={[
-                  styles.trackerRingFill,
-                  {
-                    borderColor: theme.accentColor,
-                    transform: [{ rotate: `${cycleProgress * 360}deg` }],
-                  },
-                ]}
-              />
-              <View style={styles.trackerRingInner}>
-                <Text style={styles.trackerDayLabel}>Day</Text>
-                <Text style={[styles.trackerDayNum, { color: theme.accentColor }]}>
-                  {cycleDay ?? '—'}
-                </Text>
-                <Text style={styles.trackerPhase}>{phaseKey}</Text>
-              </View>
+          <View style={styles.trackerStats}>
+            <View style={styles.trackerStatRow}>
+              <View style={[styles.statDot, { backgroundColor: '#22E58A' }]} />
+              <Text style={styles.statLabel}>Phase</Text>
+              <Text style={styles.statValue}>{phaseKey}</Text>
+            </View>
+            <View style={styles.trackerStatRow}>
+              <View style={[styles.statDot, { backgroundColor: '#7FE8E1' }]} />
+              <Text style={styles.statLabel}>Day</Text>
+              <Text style={styles.statValue}>{cycleDay ?? '—'}</Text>
+            </View>
+            <View style={styles.trackerStatRow}>
+              <View style={[styles.statDot, { backgroundColor: '#F5A623' }]} />
+              <Text style={styles.statLabel}>Next period</Text>
+              <Text style={styles.statValue}>{daysUntilPeriod !== null ? `${daysUntilPeriod}d` : '—'}</Text>
+            </View>
+            <Text style={styles.trackerLastUpdated}>
+              Cycle length · {cycleLength} days
+            </Text>
+          </View>
+
+          {/* Whoop-style segmented ring */}
+          <View style={styles.ringContainer}>
+            {Array.from({ length: 28 }).map((_, i) => {
+              const day = i + 1;
+              const angle = (i / 28) * 360;
+              let color = '#22272C';
+              if (cycleDay !== null) {
+                if (day <= cycleDay) {
+                  if (day <= 7) color = '#FF6B6B';        // menstrual
+                  else if (day <= 14) color = '#22E58A';  // follicular
+                  else if (day <= 21) color = '#F5A623';  // ovulation
+                  else color = '#7FE8E1';                 // luteal
+                }
+              }
+              return (
+                <View
+                  key={i}
+                  style={[
+                    styles.ringSegment,
+                    {
+                      backgroundColor: color,
+                      transform: [
+                        { translateX: -1 },
+                        { rotate: `${angle}deg` },
+                        { translateY: -65 },
+                      ],
+                    },
+                  ]}
+                />
+              );
+            })}
+            <View style={styles.ringInner}>
+              <Text style={styles.ringInnerNum}>{cycleDay ?? '—'}</Text>
+              <Text style={styles.ringInnerLabel}>DAY</Text>
             </View>
           </View>
-          <View style={styles.trackerInfo}>
-            <Text style={styles.trackerInfoLabel}>Period in</Text>
-            <Text style={[styles.trackerInfoValue, { color: theme.accentColor }]}>
-              {daysUntilPeriod !== null ? `${daysUntilPeriod} ${daysUntilPeriod === 1 ? 'day' : 'days'}` : 'Set date'}
-            </Text>
-            <Text style={styles.trackerInfoSub}>Cycle length · {cycleLength} days</Text>
-            {peakLabel ? (
-              <View style={[styles.trackerChip, { backgroundColor: theme.surface, borderColor: theme.border }]}>
-                <Text style={[styles.trackerChipText, { color: theme.accentColor }]}>Peak fertility · {peakLabel}</Text>
-              </View>
-            ) : null}
-          </View>
         </View>
+      </View>
 
-        <View style={styles.trackerDivider} />
-
-        <Text style={styles.trackerLogTitle}>Log today</Text>
-        <View style={styles.trackerActions}>
+      {/* Health Monitor */}
+      <View style={styles.trackerCard}>
+        <View style={styles.trackerCardHeader}>
+          <Text style={styles.trackerCardTitle}>HEALTH MONITOR</Text>
+          <ChevronRight color="#7A8088" size={18} />
+        </View>
+        <View style={styles.healthRow}>
           {[
-            { key: 'period', label: 'Period', Icon: Droplet },
-            { key: 'mood', label: 'Mood', Icon: Smile },
-            { key: 'symptoms', label: 'Symptoms', Icon: Activity },
-            { key: 'more', label: 'More', Icon: Plus },
-          ].map(({ key, label, Icon }) => (
-            <TouchableOpacity
-              key={key}
-              style={styles.trackerActionBtn}
-              onPress={() => router.push('/tracking' as any)}
-            >
-              <View style={[styles.trackerActionIcon, { backgroundColor: theme.surface, borderColor: theme.border }]}>
-                <Icon color={theme.accentColor} size={20} />
+            { Icon: Wind, label: 'RESP' },
+            { Icon: Droplet, label: 'SPO₂' },
+            { Icon: Heart, label: 'RHR' },
+            { Icon: Activity, label: 'HRV' },
+            { Icon: Thermometer, label: 'TEMP' },
+          ].map(({ Icon, label }) => (
+            <View key={label} style={styles.healthMetric}>
+              <Icon color="#C7CDD3" size={22} strokeWidth={1.5} />
+              <Text style={styles.healthMetricLabel}>{label}</Text>
+              <View style={styles.healthCheckBox}>
+                <Check color="#0B0F12" size={14} strokeWidth={3} />
               </View>
-              <Text style={styles.trackerActionLabel}>{label}</Text>
-            </TouchableOpacity>
+            </View>
           ))}
         </View>
+        <View style={styles.metricsBanner}>
+          <View style={styles.healthCheckBox}>
+            <Check color="#0B0F12" size={14} strokeWidth={3} />
+          </View>
+          <Text style={styles.metricsBannerText}>5/5 metrics within range</Text>
+        </View>
+      </View>
+
+      {/* Daily Water Intake */}
+      <View style={styles.trackerCard}>
+        <View style={styles.trackerCardHeader}>
+          <Text style={styles.trackerCardTitle}>WATER INTAKE</Text>
+          <Text style={styles.waterGoal}>{waterIntake}/{waterGoal} glasses</Text>
+        </View>
+        <View style={styles.waterRow}>
+          <TouchableOpacity onPress={decWater} style={styles.waterBtn}>
+            <Minus color="#FFFFFF" size={20} />
+          </TouchableOpacity>
+          <View style={styles.glassesRow}>
+            {Array.from({ length: waterGoal }).map((_, i) => (
+              <Droplet
+                key={i}
+                color={i < waterIntake ? '#7FE8E1' : '#22272C'}
+                fill={i < waterIntake ? '#7FE8E1' : 'transparent'}
+                size={22}
+              />
+            ))}
+          </View>
+          <TouchableOpacity onPress={incWater} style={[styles.waterBtn, { backgroundColor: '#7FE8E1' }]}>
+            <Plus color="#0B0F12" size={20} />
+          </TouchableOpacity>
+        </View>
+        <Text style={styles.waterSub}>
+          {waterIntake >= waterGoal ? 'Goal reached today 🎉' : `${(waterIntake * 0.25).toFixed(2)} L of ${(waterGoal * 0.25).toFixed(2)} L`}
+        </Text>
       </View>
 
       {/* Welcome Section */}
