@@ -88,19 +88,22 @@ export type PhaseTheme = {
 // Override per-phase colors so the entire app uses one consistent theme,
 // regardless of cycle phase. Only colors/gradient are unified—phase-specific
 // content (workouts, diet, etc.) remains intact.
+// Whoop-style dark palette (inspired by reference health tracker UI)
 export const FLO_COLORS = {
-  primary: '#FF5C8A',        // coral-pink CTA / accent
-  primaryDark: '#E94B78',
-  primaryDeep: '#1A1A40',    // deep indigo for headings/icons
-  surface: '#FFF1F2',        // app background
-  surfaceAlt: '#FFE4E9',     // secondary surface
-  card: '#FFFFFF',
-  border: '#F2D9DE',
-  textPrimary: '#1A1A40',
-  textSecondary: '#4A4A5E',
-  textMuted: '#6B6B80',
-  success: '#3BB273',
-  warning: '#F4A261',
+  primary: '#22E58A',        // neon green accent
+  primaryDark: '#16B870',
+  primaryDeep: '#0B0F12',    // near-black background
+  surface: '#0B0F12',        // app background
+  surfaceAlt: '#15191D',     // card background
+  card: '#15191D',
+  border: '#22272C',         // subtle card borders
+  textPrimary: '#FFFFFF',
+  textSecondary: '#C7CDD3',
+  textMuted: '#7A8088',
+  success: '#22E58A',
+  warning: '#F5A623',
+  danger: '#FF6B6B',
+  info: '#7FE8E1',
 };
 
 export const themes: Record<HormonalPhase, PhaseTheme> = {
@@ -318,7 +321,7 @@ export const themes: Record<HormonalPhase, PhaseTheme> = {
 
 // Apply Flo unified palette across all phases (must run AFTER themes is defined)
 (['Menstrual', 'Follicular', 'Ovulation', 'Luteal'] as HormonalPhase[]).forEach((p) => {
-  themes[p].gradient = ['#FF8FB1', '#FF5C8A'];
+  themes[p].gradient = ['#15191D', '#0B0F12'];
   themes[p].accentColor = FLO_COLORS.primary;
   themes[p].surface = FLO_COLORS.surface;
   themes[p].border = FLO_COLORS.border;

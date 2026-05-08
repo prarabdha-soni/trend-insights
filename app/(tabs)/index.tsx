@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal, Animated, 
 // @ts-ignore: Only used on native
 import { WebView } from 'react-native-webview';
 import { useUser } from '@/contexts/UserContext';
-import { Sparkles, Crown, Play, X, Droplet, Smile, Activity, Plus } from 'lucide-react-native';
+import { Sparkles, Crown, Play, X, Droplet, Smile, Activity, ChevronRight, Heart, Thermometer, Wind, Moon, Check, Minus, Plus } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import { useMemo, useState, useEffect, useRef } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -24,6 +24,23 @@ export default function HomeScreen() {
   
   // Mood Tracker
   const [todayMood, setTodayMood] = useState<'😊' | '😐' | '😔' | null>(null);
+
+  // Water intake tracker
+  const waterGoal = 8;
+  const [waterIntake, setWaterIntake] = useState<number>(0);
+  useEffect(() => {
+    (async () => {
+      const todayKey = new Date().toISOString().slice(0, 10);
+      const v = await AsyncStorage.getItem(`@water:${todayKey}`);
+      if (v) setWaterIntake(parseInt(v, 10) || 0);
+    })();
+  }, []);
+  const persistWater = async (n: number) => {
+    const todayKey = new Date().toISOString().slice(0, 10);
+    await AsyncStorage.setItem(`@water:${todayKey}`, String(n));
+  };
+  const incWater = () => setWaterIntake((p) => { const n = Math.min(waterGoal, p + 1); persistWater(n); return n; });
+  const decWater = () => setWaterIntake((p) => { const n = Math.max(0, p - 1); persistWater(n); return n; });
   
   // Video Player
   const [playingVideo, setPlayingVideo] = useState(false);
@@ -304,65 +321,131 @@ export default function HomeScreen() {
         </View>
       </LinearGradient>
 
-      {/* Clue-style Cycle Tracker */}
+      {/* Whoop-style Cycle Tracker */}
       <View style={styles.trackerCard}>
+        <View style={styles.trackerCardHeader}>
+          <Text style={styles.trackerCardTitle}>CYCLE TRACKER</Text>
+          <ChevronRight color="#7A8088" size={18} />
+        </View>
         <View style={styles.trackerTop}>
-          <View style={styles.trackerRingWrap}>
-            <View style={[styles.trackerRing, { borderColor: theme.border }]}>
-              <View
-                style={[
-                  styles.trackerRingFill,
-                  {
-                    borderColor: theme.accentColor,
-                    transform: [{ rotate: `${cycleProgress * 360}deg` }],
-                  },
-                ]}
-              />
-              <View style={styles.trackerRingInner}>
-                <Text style={styles.trackerDayLabel}>Day</Text>
-                <Text style={[styles.trackerDayNum, { color: theme.accentColor }]}>
-                  {cycleDay ?? '—'}
-                </Text>
-                <Text style={styles.trackerPhase}>{phaseKey}</Text>
-              </View>
+          <View style={styles.trackerStats}>
+            <View style={styles.trackerStatRow}>
+              <View style={[styles.statDot, { backgroundColor: '#22E58A' }]} />
+              <Text style={styles.statLabel}>Phase</Text>
+              <Text style={styles.statValue}>{phaseKey}</Text>
+            </View>
+            <View style={styles.trackerStatRow}>
+              <View style={[styles.statDot, { backgroundColor: '#7FE8E1' }]} />
+              <Text style={styles.statLabel}>Day</Text>
+              <Text style={styles.statValue}>{cycleDay ?? '—'}</Text>
+            </View>
+            <View style={styles.trackerStatRow}>
+              <View style={[styles.statDot, { backgroundColor: '#F5A623' }]} />
+              <Text style={styles.statLabel}>Next period</Text>
+              <Text style={styles.statValue}>{daysUntilPeriod !== null ? `${daysUntilPeriod}d` : '—'}</Text>
+            </View>
+            <Text style={styles.trackerLastUpdated}>
+              Cycle length · {cycleLength} days
+            </Text>
+          </View>
+
+          {/* Whoop-style segmented ring */}
+          <View style={styles.ringContainer}>
+            {Array.from({ length: 28 }).map((_, i) => {
+              const day = i + 1;
+              const angle = (i / 28) * 360;
+              let color = '#22272C';
+              if (cycleDay !== null) {
+                if (day <= cycleDay) {
+                  if (day <= 7) color = '#FF6B6B';        // menstrual
+                  else if (day <= 14) color = '#22E58A';  // follicular
+                  else if (day <= 21) color = '#F5A623';  // ovulation
+                  else color = '#7FE8E1';                 // luteal
+                }
+              }
+              return (
+                <View
+                  key={i}
+                  style={[
+                    styles.ringSegment,
+                    {
+                      backgroundColor: color,
+                      transform: [
+                        { translateX: -1 },
+                        { rotate: `${angle}deg` },
+                        { translateY: -65 },
+                      ],
+                    },
+                  ]}
+                />
+              );
+            })}
+            <View style={styles.ringInner}>
+              <Text style={styles.ringInnerNum}>{cycleDay ?? '—'}</Text>
+              <Text style={styles.ringInnerLabel}>DAY</Text>
             </View>
           </View>
-          <View style={styles.trackerInfo}>
-            <Text style={styles.trackerInfoLabel}>Period in</Text>
-            <Text style={[styles.trackerInfoValue, { color: theme.accentColor }]}>
-              {daysUntilPeriod !== null ? `${daysUntilPeriod} ${daysUntilPeriod === 1 ? 'day' : 'days'}` : 'Set date'}
-            </Text>
-            <Text style={styles.trackerInfoSub}>Cycle length · {cycleLength} days</Text>
-            {peakLabel ? (
-              <View style={[styles.trackerChip, { backgroundColor: theme.surface, borderColor: theme.border }]}>
-                <Text style={[styles.trackerChipText, { color: theme.accentColor }]}>Peak fertility · {peakLabel}</Text>
-              </View>
-            ) : null}
-          </View>
         </View>
+      </View>
 
-        <View style={styles.trackerDivider} />
-
-        <Text style={styles.trackerLogTitle}>Log today</Text>
-        <View style={styles.trackerActions}>
+      {/* Health Monitor */}
+      <View style={styles.trackerCard}>
+        <View style={styles.trackerCardHeader}>
+          <Text style={styles.trackerCardTitle}>HEALTH MONITOR</Text>
+          <ChevronRight color="#7A8088" size={18} />
+        </View>
+        <View style={styles.healthRow}>
           {[
-            { key: 'period', label: 'Period', Icon: Droplet },
-            { key: 'mood', label: 'Mood', Icon: Smile },
-            { key: 'symptoms', label: 'Symptoms', Icon: Activity },
-            { key: 'more', label: 'More', Icon: Plus },
-          ].map(({ key, label, Icon }) => (
-            <TouchableOpacity
-              key={key}
-              style={styles.trackerActionBtn}
-              onPress={() => router.push('/tracking' as any)}
-            >
-              <View style={[styles.trackerActionIcon, { backgroundColor: theme.surface, borderColor: theme.border }]}>
-                <Icon color={theme.accentColor} size={20} />
+            { Icon: Wind, label: 'RESP' },
+            { Icon: Droplet, label: 'SPO₂' },
+            { Icon: Heart, label: 'RHR' },
+            { Icon: Activity, label: 'HRV' },
+            { Icon: Thermometer, label: 'TEMP' },
+          ].map(({ Icon, label }) => (
+            <View key={label} style={styles.healthMetric}>
+              <Icon color="#C7CDD3" size={22} strokeWidth={1.5} />
+              <Text style={styles.healthMetricLabel}>{label}</Text>
+              <View style={styles.healthCheckBox}>
+                <Check color="#0B0F12" size={14} strokeWidth={3} />
               </View>
-              <Text style={styles.trackerActionLabel}>{label}</Text>
-            </TouchableOpacity>
+            </View>
           ))}
         </View>
+        <View style={styles.metricsBanner}>
+          <View style={styles.healthCheckBox}>
+            <Check color="#0B0F12" size={14} strokeWidth={3} />
+          </View>
+          <Text style={styles.metricsBannerText}>5/5 metrics within range</Text>
+        </View>
+      </View>
+
+      {/* Daily Water Intake */}
+      <View style={styles.trackerCard}>
+        <View style={styles.trackerCardHeader}>
+          <Text style={styles.trackerCardTitle}>WATER INTAKE</Text>
+          <Text style={styles.waterGoal}>{waterIntake}/{waterGoal} glasses</Text>
+        </View>
+        <View style={styles.waterRow}>
+          <TouchableOpacity onPress={decWater} style={styles.waterBtn}>
+            <Minus color="#FFFFFF" size={20} />
+          </TouchableOpacity>
+          <View style={styles.glassesRow}>
+            {Array.from({ length: waterGoal }).map((_, i) => (
+              <Droplet
+                key={i}
+                color={i < waterIntake ? '#7FE8E1' : '#22272C'}
+                fill={i < waterIntake ? '#7FE8E1' : 'transparent'}
+                size={22}
+              />
+            ))}
+          </View>
+          <TouchableOpacity onPress={incWater} style={[styles.waterBtn, { backgroundColor: '#7FE8E1' }]}>
+            <Plus color="#0B0F12" size={20} />
+          </TouchableOpacity>
+        </View>
+        <Text style={styles.waterSub}>
+          {waterIntake >= waterGoal ? 'Goal reached today 🎉' : `${(waterIntake * 0.25).toFixed(2)} L of ${(waterGoal * 0.25).toFixed(2)} L`}
+        </Text>
       </View>
 
       {/* Welcome Section */}
@@ -754,57 +837,61 @@ const styles = StyleSheet.create({
   quickAccessCard: { width: '47%', padding: 20, borderRadius: 16, borderWidth: 1, alignItems: 'center', justifyContent: 'center', minHeight: 100 },
   quickAccessEmoji: { fontSize: 32, marginBottom: 8 },
   quickAccessLabel: { fontSize: 14, fontWeight: '700', color: '#111827', textAlign: 'center' },
-  // Clue-style tracker
+  // Whoop-style dark tracker cards
   trackerCard: {
     marginHorizontal: 16,
-    marginTop: -24,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 24,
-    padding: 20,
-    shadowColor: '#1A1A40',
-    shadowOpacity: 0.08,
-    shadowRadius: 16,
-    shadowOffset: { width: 0, height: 6 },
-    elevation: 4,
-    zIndex: 10,
-  },
-  trackerTop: { flexDirection: 'row', alignItems: 'center', gap: 16 },
-  trackerRingWrap: { width: 120, height: 120, alignItems: 'center', justifyContent: 'center' },
-  trackerRing: {
-    width: 120, height: 120, borderRadius: 60,
-    borderWidth: 6, alignItems: 'center', justifyContent: 'center',
-    overflow: 'hidden',
-  },
-  trackerRingFill: {
-    position: 'absolute',
-    width: 120, height: 120, borderRadius: 60,
-    borderWidth: 6,
-    borderRightColor: 'transparent',
-    borderBottomColor: 'transparent',
-    borderLeftColor: 'transparent',
-  },
-  trackerRingInner: { alignItems: 'center', justifyContent: 'center' },
-  trackerDayLabel: { fontSize: 11, color: '#6B7280', fontWeight: '600', textTransform: 'uppercase', letterSpacing: 0.5 },
-  trackerDayNum: { fontSize: 32, fontWeight: '800', lineHeight: 36 },
-  trackerPhase: { fontSize: 11, color: '#1A1A40', fontWeight: '700' },
-  trackerInfo: { flex: 1, gap: 4 },
-  trackerInfoLabel: { fontSize: 13, color: '#6B7280', fontWeight: '600' },
-  trackerInfoValue: { fontSize: 24, fontWeight: '800' },
-  trackerInfoSub: { fontSize: 12, color: '#6B7280' },
-  trackerChip: {
-    alignSelf: 'flex-start', marginTop: 8,
-    paddingVertical: 6, paddingHorizontal: 10,
-    borderRadius: 12, borderWidth: 1,
-  },
-  trackerChipText: { fontSize: 11, fontWeight: '700' },
-  trackerDivider: { height: 1, backgroundColor: '#F2D9DE', marginVertical: 16 },
-  trackerLogTitle: { fontSize: 13, fontWeight: '700', color: '#1A1A40', marginBottom: 12, textTransform: 'uppercase', letterSpacing: 0.5 },
-  trackerActions: { flexDirection: 'row', justifyContent: 'space-between' },
-  trackerActionBtn: { alignItems: 'center', gap: 6, flex: 1 },
-  trackerActionIcon: {
-    width: 52, height: 52, borderRadius: 26,
-    alignItems: 'center', justifyContent: 'center',
+    marginTop: 16,
+    backgroundColor: '#15191D',
+    borderRadius: 20,
+    padding: 18,
     borderWidth: 1,
+    borderColor: '#22272C',
   },
-  trackerActionLabel: { fontSize: 12, fontWeight: '600', color: '#1A1A40' },
+  trackerCardHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 },
+  trackerCardTitle: { color: '#FFFFFF', fontSize: 13, fontWeight: '800', letterSpacing: 1.2 },
+  trackerTop: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  trackerStats: { flex: 1, gap: 10 },
+  trackerStatRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  statDot: { width: 8, height: 8, borderRadius: 4 },
+  statLabel: { color: '#7A8088', fontSize: 13, fontWeight: '600', flex: 1 },
+  statValue: { color: '#FFFFFF', fontSize: 15, fontWeight: '700' },
+  trackerLastUpdated: { color: '#7A8088', fontSize: 11, marginTop: 6 },
+  // Segmented ring
+  ringContainer: { width: 140, height: 140, alignItems: 'center', justifyContent: 'center', position: 'relative' },
+  ringSegment: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    width: 2,
+    height: 14,
+    borderRadius: 1,
+  },
+  ringInner: { alignItems: 'center', justifyContent: 'center' },
+  ringInnerNum: { color: '#FFFFFF', fontSize: 32, fontWeight: '800', lineHeight: 34 },
+  ringInnerLabel: { color: '#7A8088', fontSize: 10, fontWeight: '700', letterSpacing: 1.5, marginTop: 2 },
+  // Health monitor
+  healthRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 4 },
+  healthMetric: { alignItems: 'center', gap: 8, flex: 1 },
+  healthMetricLabel: { color: '#FFFFFF', fontSize: 11, fontWeight: '800', letterSpacing: 0.5 },
+  healthCheckBox: {
+    width: 22, height: 22, borderRadius: 6,
+    backgroundColor: '#22E58A',
+    alignItems: 'center', justifyContent: 'center',
+  },
+  metricsBanner: {
+    flexDirection: 'row', alignItems: 'center', gap: 10,
+    backgroundColor: '#0B0F12', borderRadius: 12, padding: 12, marginTop: 16,
+    borderWidth: 1, borderColor: '#22272C',
+  },
+  metricsBannerText: { color: '#FFFFFF', fontSize: 13, fontWeight: '600' },
+  // Water intake
+  waterGoal: { color: '#7FE8E1', fontSize: 13, fontWeight: '700' },
+  waterRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 10 },
+  waterBtn: {
+    width: 40, height: 40, borderRadius: 20,
+    backgroundColor: '#22272C',
+    alignItems: 'center', justifyContent: 'center',
+  },
+  glassesRow: { flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 4 },
+  waterSub: { color: '#7A8088', fontSize: 12, marginTop: 12, textAlign: 'center' },
 });
