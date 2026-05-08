@@ -24,6 +24,23 @@ export default function HomeScreen() {
   
   // Mood Tracker
   const [todayMood, setTodayMood] = useState<'😊' | '😐' | '😔' | null>(null);
+
+  // Water intake tracker
+  const waterGoal = 8;
+  const [waterIntake, setWaterIntake] = useState<number>(0);
+  useEffect(() => {
+    (async () => {
+      const todayKey = new Date().toISOString().slice(0, 10);
+      const v = await AsyncStorage.getItem(`@water:${todayKey}`);
+      if (v) setWaterIntake(parseInt(v, 10) || 0);
+    })();
+  }, []);
+  const persistWater = async (n: number) => {
+    const todayKey = new Date().toISOString().slice(0, 10);
+    await AsyncStorage.setItem(`@water:${todayKey}`, String(n));
+  };
+  const incWater = () => setWaterIntake((p) => { const n = Math.min(waterGoal, p + 1); persistWater(n); return n; });
+  const decWater = () => setWaterIntake((p) => { const n = Math.max(0, p - 1); persistWater(n); return n; });
   
   // Video Player
   const [playingVideo, setPlayingVideo] = useState(false);
